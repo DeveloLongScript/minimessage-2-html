@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var jsx_runtime_1 = require("react/jsx-runtime");
 var prettier = require("prettier");
 var divList = {
     black: "text-black",
@@ -98,9 +97,6 @@ function parseToHTML(m) {
     });
 }
 exports.default = parseToHTML;
-function parseToJSX() {
-    return (0, jsx_runtime_1.jsx)("div", { children: "yhkptoykt" });
-}
 function objToHTML(i) {
     var curClass = "";
     var contents = "";

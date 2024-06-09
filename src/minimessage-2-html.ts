@@ -1,6 +1,4 @@
 import * as prettier from "prettier";
-import React from "react";
-import { useEffect } from "react/cjs/react.development";
 
 const divList = {
   black: "text-black",
@@ -137,3 +135,4 @@ type Element = {
   italic?: boolean;
   strikethrough?: boolean;
 };
+

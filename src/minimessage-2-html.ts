@@ -1,4 +1,3 @@
-import * as prettier from "prettier";
 
 const divList = {
   black: "text-black",
@@ -77,14 +76,7 @@ export default function parseToHTML(m: string): Promise<string> {
               allHTML += createHTML("span", curClass, i.text + contents);
             }
           });
-          prettier
-            .format("<div>" + allHTML + "</div>", {
-              parser: "babel",
-              semi: false,
-            })
-            .then((s) => {
-              g(s.substring(1));
-            });
+          g("<div>" + allHTML + "</div>")
         }
       });
       if (!j.ok) {
@@ -135,4 +127,3 @@ type Element = {
   italic?: boolean;
   strikethrough?: boolean;
 };
-

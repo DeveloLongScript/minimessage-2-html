@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var prettier = require("prettier");
 var divList = {
     black: "text-black",
     dark_blue: "text-blue-800",
@@ -80,14 +79,7 @@ function parseToHTML(m) {
                             allHTML += createHTML("span", curClass, i.text + contents);
                         }
                     });
-                    prettier
-                        .format("<div>" + allHTML + "</div>", {
-                        parser: "babel",
-                        semi: false,
-                    })
-                        .then(function (s) {
-                        g(s.substring(1));
-                    });
+                    g("<div>" + allHTML + "</div>");
                 }
             });
             if (!j.ok) {

@@ -1,6 +1,6 @@
 {
   "name": "minimessage-2-html",
-  "version": "1.0.2",
+  "version": "1.2.0",
   "description": "",
   "main": "dist/minimessage-2-html.js",
   "scripts": {
@@ -8,9 +8,6 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "prettier": "^3.3.1"
-  },
   "devDependencies": {
     "typescript": "^5.4.5"
   }

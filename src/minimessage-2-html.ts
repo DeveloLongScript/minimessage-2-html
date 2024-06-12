@@ -115,6 +115,8 @@ function objToHTML(i: Element): string {
 }
 
 function createHTML(tag: string, className: string, contents: string) {
+  if (className == undefined) className = "";
+  if (contents == undefined) contents = "";
   return (
     "<" + tag + ' class="' + className + '">' + contents + "</" + tag + ">"
   );

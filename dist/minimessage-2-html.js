@@ -118,5 +118,9 @@ function objToHTML(i) {
     return createHTML("span", curClass, i.text + contents);
 }
 function createHTML(tag, className, contents) {
+    if (className == undefined)
+        className = "";
+    if (contents == undefined)
+        contents = "";
     return ("<" + tag + ' class="' + className + '">' + contents + "</" + tag + ">");
 }

@@ -153,7 +153,9 @@ function createHTML(tag, className, contents, tw) {
         className = "";
     if (contents == undefined)
         contents = "";
-    if (tw == true) {
+    if (contents == "undefined")
+        return "<br/>";
+    if (tw == false || tw == undefined) {
         return ("<" +
             tag +
             ' style="' +

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var tw_to_css_1 = require("tw-to-css");
 var divList = {
     black: "text-black",
     dark_blue: "text-blue-800",
@@ -26,7 +27,7 @@ var divList = {
     bold: "font-bold",
     b: "font-bold",
 };
-function parseToHTML(m) {
+function parseToHTML(m, tw) {
     return new Promise(function (g, b) {
         fetch("https://webui.advntr.dev/api/mini-to-json", {
             method: "POST",
@@ -43,42 +44,72 @@ function parseToHTML(m) {
                     // This text has custom properties
                     var allHTML = "";
                     var root = l.extra;
-                    root.forEach(function (i) {
-                        if (typeof i === "string") {
-                            allHTML += i;
+                    if (root == undefined) {
+                        var curClass = "";
+                        var contents = "";
+                        if (l.color != undefined) {
+                            if (divList[l.color] == undefined) {
+                                curClass +=
+                                    curClass == ""
+                                        ? "text-[" + l.color + "]"
+                                        : " text-[" + l.color + "]";
+                            }
+                            else {
+                                curClass +=
+                                    curClass == "" ? divList[l.color] : " " + divList[l.color];
+                            }
                         }
-                        else {
-                            var curClass = "";
-                            var contents = "";
-                            if (i.extra != undefined) {
-                                i.extra.forEach(function (m) {
-                                    contents += objToHTML(m);
-                                });
-                            }
-                            if (i.color != undefined) {
-                                if (divList[i.color] == undefined) {
-                                    curClass +=
-                                        curClass == ""
-                                            ? "text-[" + i.color + "]"
-                                            : " text-[" + i.color + "]";
-                                }
-                                else {
-                                    curClass +=
-                                        curClass == "" ? divList[i.color] : " " + divList[i.color];
-                                }
-                            }
-                            if (i.strikethrough == true) {
-                                curClass += curClass == "" ? "line-through" : " line-through";
-                            }
-                            if (i.bold == true) {
-                                curClass += curClass == "" ? "font-bold" : " font-bold";
-                            }
-                            if (i.italic == true) {
-                                curClass += curClass == "" ? "italic" : " italic";
-                            }
-                            allHTML += createHTML("span", curClass, i.text + contents);
+                        if (l.strikethrough == true) {
+                            curClass += curClass == "" ? "line-through" : " line-through";
                         }
-                    });
+                        if (l.bold == true) {
+                            curClass += curClass == "" ? "font-bold" : " font-bold";
+                        }
+                        if (l.italic == true) {
+                            curClass += curClass == "" ? "italic" : " italic";
+                        }
+                        allHTML += createHTML("span", curClass, l.text + contents);
+                    }
+                    else {
+                        root.forEach(function (i) {
+                            if (typeof i === "string") {
+                                allHTML += i;
+                            }
+                            else {
+                                var curClass = "";
+                                var contents = "";
+                                if (i.extra != undefined) {
+                                    i.extra.forEach(function (m) {
+                                        contents += objToHTML(m);
+                                    });
+                                }
+                                if (i.color != undefined) {
+                                    if (divList[i.color] == undefined) {
+                                        curClass +=
+                                            curClass == ""
+                                                ? "text-[" + i.color + "]"
+                                                : " text-[" + i.color + "]";
+                                    }
+                                    else {
+                                        curClass +=
+                                            curClass == ""
+                                                ? divList[i.color]
+                                                : " " + divList[i.color];
+                                    }
+                                }
+                                if (i.strikethrough == true) {
+                                    curClass += curClass == "" ? "line-through" : " line-through";
+                                }
+                                if (i.bold == true) {
+                                    curClass += curClass == "" ? "font-bold" : " font-bold";
+                                }
+                                if (i.italic == true) {
+                                    curClass += curClass == "" ? "italic" : " italic";
+                                }
+                                allHTML += createHTML("span", curClass, l.text + contents);
+                            }
+                        });
+                    }
                     g("<div>" + allHTML + "</div>");
                 }
             });
@@ -117,10 +148,23 @@ function objToHTML(i) {
     }
     return createHTML("span", curClass, i.text + contents);
 }
-function createHTML(tag, className, contents) {
+function createHTML(tag, className, contents, tw) {
     if (className == undefined)
         className = "";
     if (contents == undefined)
         contents = "";
-    return ("<" + tag + ' class="' + className + '">' + contents + "</" + tag + ">");
+    if (tw == true) {
+        return ("<" +
+            tag +
+            ' style="' +
+            (0, tw_to_css_1.twi)(className) +
+            '">' +
+            contents +
+            "</" +
+            tag +
+            ">");
+    }
+    else {
+        return ("<" + tag + ' class="' + className + '">' + contents + "</" + tag + ">");
+    }
 }

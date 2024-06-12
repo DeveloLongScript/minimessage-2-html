@@ -1,4 +1,4 @@
-
+import { twi } from "tw-to-css";
 const divList = {
   black: "text-black",
   dark_blue: "text-blue-800",
@@ -26,7 +26,7 @@ const divList = {
   b: "font-bold",
 };
 
-export default function parseToHTML(m: string): Promise<string> {
+export default function parseToHTML(m: string, tw?: boolean): Promise<string> {
   return new Promise<string>((g, b) => {
     fetch("https://webui.advntr.dev/api/mini-to-json", {
       method: "POST",
@@ -42,41 +42,69 @@ export default function parseToHTML(m: string): Promise<string> {
           // This text has custom properties
           var allHTML = "";
           var root: Array<Element | string> = l.extra;
-          root.forEach((i) => {
-            if (typeof i === "string") {
-              allHTML += i;
-            } else {
-              var curClass = "";
-              var contents = "";
-              if (i.extra != undefined) {
-                i.extra.forEach((m) => {
-                  contents += objToHTML(m);
-                });
+          if (root == undefined) {
+            var curClass = "";
+            var contents = "";
+            if (l.color != undefined) {
+              if (divList[l.color] == undefined) {
+                curClass +=
+                  curClass == ""
+                    ? "text-[" + l.color + "]"
+                    : " text-[" + l.color + "]";
+              } else {
+                curClass +=
+                  curClass == "" ? divList[l.color] : " " + divList[l.color];
               }
-              if (i.color != undefined) {
-                if (divList[i.color] == undefined) {
-                  curClass +=
-                    curClass == ""
-                      ? "text-[" + i.color + "]"
-                      : " text-[" + i.color + "]";
-                } else {
-                  curClass +=
-                    curClass == "" ? divList[i.color] : " " + divList[i.color];
-                }
-              }
-              if (i.strikethrough == true) {
-                curClass += curClass == "" ? "line-through" : " line-through";
-              }
-              if (i.bold == true) {
-                curClass += curClass == "" ? "font-bold" : " font-bold";
-              }
-              if (i.italic == true) {
-                curClass += curClass == "" ? "italic" : " italic";
-              }
-              allHTML += createHTML("span", curClass, i.text + contents);
             }
-          });
-          g("<div>" + allHTML + "</div>")
+            if (l.strikethrough == true) {
+              curClass += curClass == "" ? "line-through" : " line-through";
+            }
+            if (l.bold == true) {
+              curClass += curClass == "" ? "font-bold" : " font-bold";
+            }
+            if (l.italic == true) {
+              curClass += curClass == "" ? "italic" : " italic";
+            }
+            allHTML += createHTML("span", curClass, l.text + contents);
+          } else {
+            root.forEach(function (i) {
+              if (typeof i === "string") {
+                allHTML += i;
+              } else {
+                var curClass = "";
+                var contents = "";
+                if (i.extra != undefined) {
+                  i.extra.forEach(function (m) {
+                    contents += objToHTML(m);
+                  });
+                }
+                if (i.color != undefined) {
+                  if (divList[i.color] == undefined) {
+                    curClass +=
+                      curClass == ""
+                        ? "text-[" + i.color + "]"
+                        : " text-[" + i.color + "]";
+                  } else {
+                    curClass +=
+                      curClass == ""
+                        ? divList[i.color]
+                        : " " + divList[i.color];
+                  }
+                }
+                if (i.strikethrough == true) {
+                  curClass += curClass == "" ? "line-through" : " line-through";
+                }
+                if (i.bold == true) {
+                  curClass += curClass == "" ? "font-bold" : " font-bold";
+                }
+                if (i.italic == true) {
+                  curClass += curClass == "" ? "italic" : " italic";
+                }
+                allHTML += createHTML("span", curClass, l.text + contents);
+              }
+            });
+          }
+          g("<div>" + allHTML + "</div>");
         }
       });
       if (!j.ok) {
@@ -111,15 +139,36 @@ function objToHTML(i: Element): string {
   if (i.italic == true) {
     curClass += curClass == "" ? "italic" : " italic";
   }
+
   return createHTML("span", curClass, i.text + contents);
 }
 
-function createHTML(tag: string, className: string, contents: string) {
+function createHTML(
+  tag: string,
+  className: string,
+  contents: string,
+  tw?: boolean,
+) {
   if (className == undefined) className = "";
   if (contents == undefined) contents = "";
-  return (
-    "<" + tag + ' class="' + className + '">' + contents + "</" + tag + ">"
-  );
+
+  if (tw == true) {
+    return (
+      "<" +
+      tag +
+      ' style="' +
+      twi(className) +
+      '">' +
+      contents +
+      "</" +
+      tag +
+      ">"
+    );
+  } else {
+    return (
+      "<" + tag + ' class="' + className + '">' + contents + "</" + tag + ">"
+    );
+  }
 }
 type Element = {
   text: string;
